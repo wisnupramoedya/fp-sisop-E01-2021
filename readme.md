@@ -17,30 +17,30 @@ sudo ./oursql_client
 Struktur DB:
 ```
 final
-    /databases
-        /list_user_pass.csv
-        /nama_database
-            /list_user_db.csv
-            /nama_table.csv
     /fp-sisop-E01-2021
         /client
             /oursql_client.c
             /oursql_dump.c
         /database
+            /databases
+            /list_user_pass.csv
+            /nama_database
+                /list_user_db.csv
+                /nama_table.csv
             /oursql.c
             /settingan_cron_backup.tab
 ```
 
-Format list_user_pass.csv => menyimpan username dan password
+Format list_user_pass.csv => menyimpan id, username, dan password
 ```
-user1,pass1
-user2,pass2
+IDuser1,user1,pass1
+IDuser2,user2,pass2
 ```
 
-Format list_user_db.csv => menyimpan username yang punya hak
+Format list_user_db.csv => menyimpan id dari username yang punya hak
 ```
-user2
-user4
+IDuser2
+IDuser4
 ```
 
 Format nama_table.csv
