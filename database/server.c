@@ -21,11 +21,13 @@ const int S_BUFF = sizeof(char) * D_BUFF;
 int fd_now = -1;
 int id_now = -1;
  
-const char *dirNow = "/home/nabil/Documents/FP/database/databases";
-const char *TABLE_OF_USERS = "./list_user_pass.csv";
+const char *dirNow = "/home/nabil/Documents/FP/database/databases"; // how to use : gcc client.c -pthread -o client && sudo ./client
+const char *prepare = "/home/nabil/Documents/FP/database";
+const char *TABLE_OF_USERS = "./list_user_pass.csv"; // how to use : gcc server.c -pthread -o server && ./server
 const char *PERM_TABLE = "/list_user_db.csv";
-const char *LOG_FILE = "./databases/db.log";
+const char *LOG_FILE = "/home/nabil/Documents/FP/database/databases/db.log";
 char thisDataB[300];
+char thisUser[300];
 
 int create_tcp_server_socket();
 void *daemonize(pid_t *pid, pid_t *sid);
@@ -41,8 +43,12 @@ void logging(char *nama, const char *command);
 
 int main()
 {
-    // pid_t pid, sid;
-    // daemonize(&pid, &sid);
+    pid_t pid, sid;
+    daemonize(&pid, &sid);
+
+    int cek = mkdir(prepare, 0777);
+    cek = mkdir(dirNow,0777);
+
     socklen_t addrlen;
     struct sockaddr_in new_addr;
     pthread_t t_id;
@@ -68,7 +74,7 @@ void logging(char *nama, const char *command) {
     time(&rawtime);
     timeinfo = localtime(&rawtime);
 
-    FILE *fp = fopen(LOG_FILE, "a");
+    FILE *fp = fopen(LOG_FILE, "a+");
     fprintf(fp, "%d-%02d-%02d %02d:%02d:%02d:%s:%s\n", timeinfo->tm_year + 1900,
             timeinfo->tm_mon + 1, timeinfo->tm_mday, timeinfo->tm_hour,
             timeinfo->tm_min, timeinfo->tm_sec, nama, command);
@@ -78,7 +84,7 @@ void logging(char *nama, const char *command) {
  
 void *prog(void *argv)
 {
-    chdir(dirNow); 
+    // chdir(dirNow); 
     int fd = *(int *) argv;
     char query[D_BUFF], dummy[D_BUFF];
  
@@ -96,6 +102,7 @@ void *prog(void *argv)
                 puts(nama);
                 break;
             }
+            strcpy(thisUser, nama);
         }
         else if (strcmp(req, "CREATE") == 0) {
             req = strtok(NULL, " ");
@@ -110,6 +117,7 @@ void *prog(void *argv)
                     // puts(nama);
                     // puts(sandi);
                     createAcc(fd, nama, sandi);
+                    logging(thisUser, query);
                 } else {
                     write(fd, "Cant access\n\n", S_BUFF);
                 }
@@ -124,6 +132,7 @@ void *prog(void *argv)
                     FILE *baru = fopen(directoryp, "a+");
                     fprintf(baru, "%d\n", id_now);
                     fclose(baru);
+                    logging(thisUser, query);
                     write(fd, "Database created\n\n", S_BUFF);
                 }
                 else {
@@ -152,6 +161,7 @@ void *prog(void *argv)
                         if (thisid != -1) {
                             fprintf(baru, "%d\n", thisid);
                             write(fd, "User Granted\n\n", S_BUFF);
+                            logging(thisUser, query);
                         } else {
                             write(fd, "Wrong user\n\n", S_BUFF);
                         }
@@ -167,10 +177,11 @@ void *prog(void *argv)
             }
         } else if (strcmp(req, "USE") == 0) {
             req = strtok(NULL, " ");
-            if (isDBx(dirNow, req) && isGranted(dirNow, req)) {
+            if (isDBx(dirNow, req) && (id_now == 0 || isGranted(dirNow, req))) {
                 strcpy(thisDataB, req);
                 puts(thisDataB);
                 write(fd, "Database Granted\n\n", S_BUFF);
+                logging(thisUser, query);
             } else {
                 write(fd, "Wrong Database or Cant access\n\n",
                       S_BUFF);
@@ -229,7 +240,6 @@ bool login(int fd, char *nama, char *sandi)
     return true;
 }
  
-/*****  HELPER  *****/
 int getUserId(const char *directoryp, char *nama, char *sandi)
 {
     int ID = -1;
@@ -253,7 +263,7 @@ int getUserId(const char *directoryp, char *nama, char *sandi)
  
 int getLastId(const char *directoryp)
 {
-    int ID = 1;
+    int ID = 0;
     FILE *fp = fopen(directoryp, "r");
  
     if (fp != NULL) {
