@@ -1,3 +1,8 @@
+#include <dirent.h>
+#include <errno.h>
+#include <netinet/in.h>
+#include <pthread.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdlib.h>
@@ -21,7 +26,6 @@ const char *USERS_TABLE = "./list_user_pass.csv";
 const char *PERM_TABLE = "/list_user_db.csv";
 const char *LOG_FILE = "./databases/db.log";
 char thisDataB[300];
- 
 // Socket setup
 int create_tcp_server_socket();
 int *makeDaemon(pid_t *pid, pid_t *sid);
@@ -45,7 +49,6 @@ int main()
     // TODO:: uncomment on final
     // pid_t pid, sid;
     // int *status = makeDaemon(&pid, &sid);
- 
     socklen_t addrlen;
     struct sockaddr_in new_addr;
     pthread_t tid;
@@ -143,14 +146,14 @@ void *routes(void *argv)
                     char *thisdb = strtok(NULL, " ");
                     char *into = strtok(NULL, " ");
                     char *thisuser = strtok(NULL, " ");
-                    if(strcmp(into, "INTO") == 0){
+                    if (strcmp(into, "INTO") == 0) {
                         char path[DATA_BUFFER];
                         sprintf(path, "%s/%s%s", currDir, thisdb, PERM_TABLE);
                         puts(path);
                         FILE *baru = fopen(path, "a+");
-                        int thisid = -1; 
-                        thisid = whatId(USERS_TABLE,thisuser);
-                        if(thisid != -1){
+                        int thisid = -1;
+                        thisid = whatId(USERS_TABLE, thisuser);
+                        if (thisid != -1) {
                             fprintf(baru, "%d\n", thisid);
                             write(fd, "User Granted\n\n", SIZE_BUFFER);
                         } else {
@@ -166,19 +169,17 @@ void *routes(void *argv)
             } else {
                 write(fd, "Invalid query\n\n", SIZE_BUFFER);
             }
-        }
-        else if(strcmp(cmd, "USE") == 0){
+        } else if (strcmp(cmd, "USE") == 0) {
             cmd = strtok(NULL, " ");
-            if(isDBx(currDir, cmd) && isGranted(currDir, cmd)){
+            if (isDBx(currDir, cmd) && isGranted(currDir, cmd)) {
                 strcpy(thisDataB, cmd);
                 puts(thisDataB);
                 write(fd, "Database Granted\n\n", SIZE_BUFFER);
+            } else {
+                write(fd, "Invalid Database or Forbidden action\n\n",
+                      SIZE_BUFFER);
             }
-            else{
-                write(fd, "Invalid Database or Forbidden action\n\n", SIZE_BUFFER);
-            }
-        }
-        else {
+        } else {
             write(fd, "Invalid query\n\n", SIZE_BUFFER);
         }
     }
@@ -272,15 +273,15 @@ int getLastId(const char *path)
     return id;
 }
 
-int whatId(const char *path, char *username){
+int whatId(const char *path, char *username) {
     int id = -1;
     FILE *fp = fopen(path, "r");
- 
+
     if (fp != NULL) {
         char db[DATA_BUFFER];
- 
+
         while (fscanf(fp, "%s", db) != EOF) {
-            char *temp = strstr(db, ",") + 1; // Get username from db
+            char *temp = strstr(db, ",") + 1;  // Get username from db
             char *temp2 = strstr(db, username);
             // puts(db);
             // puts(temp);
@@ -295,10 +296,10 @@ int whatId(const char *path, char *username){
     return id;
 }
 
-bool isDBx(const char *path, char *thisdb){
+bool isDBx(const char *path, char *thisdb) {
     char temp[SIZE_BUFFER];
     sprintf(temp, "%s/%s", path, thisdb);
-    DIR* dir = opendir(temp);
+    DIR *dir = opendir(temp);
     if (dir) {
         return true;
         closedir(dir);
@@ -307,15 +308,15 @@ bool isDBx(const char *path, char *thisdb){
     }
 }
 
-bool isGranted(const char *path, char *thisdb){
+bool isGranted(const char *path, char *thisdb) {
     bool id = false;
     char temp[SIZE_BUFFER];
     sprintf(temp, "%s/%s%s", path, thisdb, PERM_TABLE);
     FILE *fp = fopen(temp, "r");
- 
+
     if (fp != NULL) {
         char db[DATA_BUFFER];
- 
+
         while (fscanf(fp, "%s", db) != EOF) {
             int angka = atoi(db);
             if (angka == curr_id) {
@@ -327,8 +328,6 @@ bool isGranted(const char *path, char *thisdb){
     }
     return id;
 }
- 
- 
 /****   SOCKET SETUP    *****/
 int create_tcp_server_socket()
 {
