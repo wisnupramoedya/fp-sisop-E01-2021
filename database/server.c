@@ -21,7 +21,7 @@ const int S_BUFF = sizeof(char) * D_BUFF;
 int fd_now = -1;
 int id_now = -1;
  
-const char *dirNow = "/home/nabil/Documents/FP/database/databases";
+const char *dirNow = "/home/wisnupramoedya/sisop/fp-sisop-E01-2021/database/databases";
 const char *TABLE_OF_USERS = "./list_user_pass.csv";
 const char *PERM_TABLE = "/list_user_db.csv";
 const char *LOG_FILE = "./databases/db.log";
@@ -121,7 +121,8 @@ void *prog(void *argv)
                     char directoryp[D_BUFF];
                     sprintf(directoryp, "%s/%s%s", dirNow, req, PERM_TABLE);
                     puts(directoryp);
-                    FILE *baru = fopen(directoryp, "a+");
+                    // printf("%d\n", id_now);
+                    FILE *baru = fopen(directoryp, "a");
                     fprintf(baru, "%d\n", id_now);
                     fclose(baru);
                     write(fd, "Database created\n\n", S_BUFF);

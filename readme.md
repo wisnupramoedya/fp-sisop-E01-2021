@@ -19,15 +19,15 @@ Struktur DB:
 final
     /fp-sisop-E01-2021
         /client
-            /oursql_client.c
-            /oursql_dump.c
+            /client.c
+            /client_dump.c
         /database
             /databases
-            /list_user_pass.csv
-            /nama_database
-                /list_user_db.csv
-                /nama_table.csv
-            /oursql.c
+                /list_user_pass.csv
+                /nama_database
+                    /list_user_db.csv
+                    /nama_table.csv
+            /server.c
             /settingan_cron_backup.tab
 ```
 
