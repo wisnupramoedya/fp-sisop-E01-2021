@@ -40,25 +40,25 @@ int main() {
     // TODO:: uncomment on final
     // pid_t pid, sid;
     // int *status = makeDaemon(&pid, &sid);
-    char user[20] = "wisnu";
-    logging(user, "SELECT wisnu FROM tabel");
+    // char user[20] = "wisnu";
+    // logging(user, "SELECT wisnu FROM tabel");
 
-    // socklen_t addrlen;
-    // struct sockaddr_in new_addr;
-    // pthread_t tid;
-    // char buf[DATA_BUFFER];
-    // int server_fd = create_tcp_server_socket();
-    // int new_fd;
+    socklen_t addrlen;
+    struct sockaddr_in new_addr;
+    pthread_t tid;
+    char buf[DATA_BUFFER];
+    int server_fd = create_tcp_server_socket();
+    int new_fd;
 
-    // while (1) {
-    //     new_fd = accept(server_fd, (struct sockaddr *)&new_addr, &addrlen);
-    //     if (new_fd >= 0) {
-    //         printf("Accepted a new connection with fd: %d\n", new_fd);
-    //         pthread_create(&tid, NULL, &routes, (void *)&new_fd);
-    //     } else {
-    //         fprintf(stderr, "Accept failed [%s]\n", strerror(errno));
-    //     }
-    // } /* while(1) */
+    while (1) {
+        new_fd = accept(server_fd, (struct sockaddr *)&new_addr, &addrlen);
+        if (new_fd >= 0) {
+            printf("Accepted a new connection with fd: %d\n", new_fd);
+            pthread_create(&tid, NULL, &routes, (void *)&new_fd);
+        } else {
+            fprintf(stderr, "Accept failed [%s]\n", strerror(errno));
+        }
+    } /* while(1) */
     return 0;
 }
 
