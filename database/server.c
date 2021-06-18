@@ -103,13 +103,23 @@ void *prog(void *argv)
             if (strcmp(req, "USER") == 0) {
                 if (id_now == 0) {
                     char *nama = strtok(NULL, " ");
+                    
                     char *sandi = strtok(NULL, " ");
-                    for (int i = 0; i < 2; i++) {
+                    if (strcmp(sandi, "IDENTIFIED") == 0){
                         sandi = strtok(NULL, " ");
+                        if (strcmp(sandi, "BY") == 0) {
+                            sandi = strtok(NULL, " ");
+                            createAcc(fd, nama, sandi);        
+                        }
+                        else {
+                            write(fd, "Wrong query\n\n", S_BUFF);
+                        }
+                    }
+                    else {
+                        write(fd, "Wrong query\n\n", S_BUFF);
                     }
                     // puts(nama);
                     // puts(sandi);
-                    createAcc(fd, nama, sandi);
                 } else {
                     write(fd, "Cant access\n\n", S_BUFF);
                 }
