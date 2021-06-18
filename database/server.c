@@ -28,7 +28,7 @@ const char *LOG_FILE = "./databases/db.log";
 char thisDataB[300];
 
 int create_tcp_server_socket();
-int *daemonize(pid_t *pid, pid_t *sid);
+void *daemonize(pid_t *pid, pid_t *sid);
 void *prog(void *argv);
 bool login(int fd, char *nama, char *sandi);
 void createAcc(int fd, char *nama, char *sandi);
@@ -42,7 +42,7 @@ void logging(char *nama, const char *command);
 int main()
 {
     // pid_t pid, sid;
-    // int *status = daemonize(&pid, &sid);
+    // daemonize(&pid, &sid);
     socklen_t addrlen;
     struct sockaddr_in new_addr;
     pthread_t t_id;
@@ -89,11 +89,13 @@ void *prog(void *argv)
         char *req = strtok(dummy, " ");
  
         if (strcmp(req, "LOGIN") == 0) {
+            char *nama = strtok(NULL, " ");
             char *sandi = (strcmp(nama, "root") != 0) 
                             ? strtok(NULL, " ") : "root";
-            char *nama = strtok(NULL, " ");
-            if (login(fd, nama, sandi) == false)
+            if (login(fd, nama, sandi) == false){
+                puts(nama);
                 break;
+            }
         }
         else if (strcmp(req, "CREATE") == 0) {
             req = strtok(NULL, " ");
@@ -357,7 +359,7 @@ int create_tcp_server_socket()
     return fd;
 }
  
-int *daemonize(pid_t *pid, pid_t *sid)
+void *daemonize(pid_t *pid, pid_t *sid)
 {
     int status;
     *pid = fork();
@@ -378,5 +380,4 @@ int *daemonize(pid_t *pid, pid_t *sid)
     close(STDIN_FILENO);
     close(STDOUT_FILENO);
     close(STDERR_FILENO);
-    return &status;
 }

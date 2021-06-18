@@ -42,13 +42,13 @@ int main(int argc, char *argv[]) {
 bool login(int fd, int argc, char *argv[]) {
     char dummy[D_BUFF];
     if (geteuid() == 0) { 
-        write(fd, "login, root", S_BUFF);
-        puts("login, root");
+        write(fd, "LOGIN root", S_BUFF);
+        puts("LOGIN root");
         strcpy(nama, "root");
         tipe = "root";
     } else if (argc == 5 && strcmp(argv[1], "-u") == 0 &&
                strcmp(argv[3], "-p") == 0) { 
-        sprintf(dummy, "login, %s %s", argv[2], argv[4]);
+        sprintf(dummy, "LOGIN %s %s", argv[2], argv[4]);
         write(fd, dummy, S_BUFF);
         puts(dummy);
         strcpy(nama, argv[2]);
@@ -59,7 +59,7 @@ bool login(int fd, int argc, char *argv[]) {
     }
     read(fd, dummy, S_BUFF);
     puts(dummy);
-    return strcmp(dummy, "Login success\n") == 0;
+    return strcmp(dummy, "Proceed to Menu\n") == 0;
 }
 
 void *input_handler(void *client_fd) {

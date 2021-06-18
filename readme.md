@@ -2,16 +2,16 @@ Run dari `cd fp-sisop-E01-2021`:
 ```
 # db
 cd database
-gcc oursql.c -o oursql
-./oursql
+gcc -pthread server.c -o server
+./server
 
 # client
 cd client
-gcc oursql_client.c -o oursql_client
+gcc -pthread client.c -o client
 # root
-sudo ./oursql_client
+sudo ./client
 # no root
-./oursql_client -u jack -p jack123
+./client -u jack -p jack123
 ```
 
 Struktur DB:
