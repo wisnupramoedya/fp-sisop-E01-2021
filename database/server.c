@@ -21,14 +21,9 @@ const int S_BUFF = sizeof(char) * D_BUFF;
 int fd_now = -1;
 int id_now = -1;
  
-<<<<<<< HEAD
 const char *dirNow = "/home/nabil/Documents/FP/database/databases"; // how to use : gcc client.c -pthread -o client && sudo ./client
 const char *prepare = "/home/nabil/Documents/FP/database";
 const char *TABLE_OF_USERS = "./list_user_pass.csv"; // how to use : gcc server.c -pthread -o server && ./server
-=======
-const char *dirNow = "/home/wisnupramoedya/sisop/fp-sisop-E01-2021/database/databases";
-const char *TABLE_OF_USERS = "./list_user_pass.csv";
->>>>>>> 93cee0fd0de246024ba1743f715368a530a1ec60
 const char *PERM_TABLE = "/list_user_db.csv";
 const char *LOG_FILE = "/home/nabil/Documents/FP/database/databases/db.log";
 char thisDataB[300];
@@ -132,11 +127,8 @@ void *prog(void *argv)
                     }
                     // puts(nama);
                     // puts(sandi);
-<<<<<<< HEAD
                     createAcc(fd, nama, sandi);
                     logging(thisUser, query);
-=======
->>>>>>> 93cee0fd0de246024ba1743f715368a530a1ec60
                 } else {
                     write(fd, "Cant access\n\n", S_BUFF);
                 }
